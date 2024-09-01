@@ -1,5 +1,6 @@
 package com.github.ericknathan.tasks.dtos.task;
 
+import com.github.ericknathan.tasks.enums.TaskStatus;
 import com.github.ericknathan.tasks.models.TaskModel;
 
 public record TaskDetailsDTO(
@@ -9,7 +10,7 @@ public record TaskDetailsDTO(
         String conclusionDate,
         String creationDate,
         String updateDate,
-        String status
+        TaskStatus status
 ) {
     public TaskDetailsDTO(TaskModel task) {
         this(
@@ -19,7 +20,7 @@ public record TaskDetailsDTO(
                 task.getConclusionDate().toString(),
                 task.getCreationDate().toString(),
                 task.getUpdateDate().toString(),
-                task.getStatus().getName()
+                task.getStatus()
         );
     }
 }

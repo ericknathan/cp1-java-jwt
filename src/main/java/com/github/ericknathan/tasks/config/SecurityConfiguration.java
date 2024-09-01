@@ -24,13 +24,19 @@ public class SecurityConfiguration {
     @Autowired
     private SecurityFilter securityFilter;
 
+    private static final String[] ROUTE_ALLOWLIST = {
+            "/public/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
-                    req.requestMatchers(HttpMethod.GET, "/public/**").permitAll();
+                    req.requestMatchers(ROUTE_ALLOWLIST).permitAll();
                     req.anyRequest().authenticated(); })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class).build();
     }

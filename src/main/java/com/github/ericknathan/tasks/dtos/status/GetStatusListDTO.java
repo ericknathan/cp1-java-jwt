@@ -11,7 +11,7 @@ public record GetStatusListDTO(
 ) {
     public GetStatusListDTO() {
         this(Arrays.stream(TaskStatus.values())
-                .map(TaskStatus::getName)
+                .map(Enum::name)
                 .collect(Collectors.toList()));
     }
 }

@@ -6,6 +6,12 @@ import com.github.ericknathan.tasks.dtos.user.UserRegisterDTO;
 import com.github.ericknathan.tasks.models.UserModel;
 import com.github.ericknathan.tasks.repositories.UserRepository;
 import com.github.ericknathan.tasks.services.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Autenticação", description = "Operações relacionadas à autenticação de usuários.")
 public class AuthController {
     @Autowired
     private UserRepository userRepository;
@@ -35,6 +42,11 @@ public class AuthController {
 
     @PostMapping("register")
     @Transactional
+    @Operation(summary = "Cadastrar um novo usuário", description = "Cadastra um novo usuário na aplicação.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso."),
+            @ApiResponse(responseCode = "409", description = "Usuário já cadastrado.")
+    })
     public ResponseEntity<Void> registerUser(@RequestBody @Valid UserRegisterDTO dto, UriComponentsBuilder builder){
         var userAlreadyExists = userRepository.findByEmail(dto.email()) != null;
         if(userAlreadyExists) return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -47,6 +59,11 @@ public class AuthController {
     }
 
     @PostMapping("login")
+    @Operation(summary = "Autenticar um usuário", description = "Autentica um usuário na aplicação.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso.", content = @Content(schema = @Schema(implementation = UserAuthDetailsDTO.class), mediaType = "application/json")),
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado.", content = @Content(schema = @Schema(hidden = true)))
+    })
     public ResponseEntity<UserAuthDetailsDTO> loginUser(@RequestBody @Valid UserLoginDTO user){
         try {
             var token = new UsernamePasswordAuthenticationToken(user.email(), user.password());

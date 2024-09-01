@@ -44,7 +44,7 @@ public class TaskModel {
     private LocalDateTime updateDate = LocalDateTime.now();
 
     @Column(name="st_tarefa", nullable = false)
-    private TaskStatus status = TaskStatus.PENDING;
+    private TaskStatus status = TaskStatus.PENDENTE;
 
     @ManyToOne
     @JoinColumn(name="cd_usuario")
